@@ -1,0 +1,820 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The BIG one</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #080b10;
+    --panel: #0e131b;
+    --panel2: #121923;
+    --border: #283242;
+    --text: #f2f5fa;
+    --muted: #8994a6;
+    --blue: #3d82ff;
+    --blue-dark: #235dc5;
+    --green: #55c56b;
+    --grass: #39733d;
+    --grass-light: #4b934e;
+    --dirt: #70482e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, sans-serif;
+}
+
+body {
+    user-select: none;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.page {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(35px) scale(.985);
+    transition:
+        opacity .55s ease,
+        transform .7s cubic-bezier(.22,.8,.25,1),
+        visibility .7s;
+}
+
+.page.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    z-index: 5;
+}
+
+.page.previous {
+    opacity: 0;
+    transform: translateY(-35px) scale(.985);
+}
+
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 42px;
+    border-bottom: 1px solid #161c25;
+    background: #080b10;
+    z-index: 20;
+}
+
+.brand {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    color: #fff;
+}
+
+.nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 38px;
+}
+
+.nav-links span {
+    color: #8d98aa;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color .2s ease;
+}
+
+.nav-links span:hover,
+.nav-links span.active {
+    color: #fff;
+}
+
+.nav-links span.active::after {
+    content: "";
+    display: block;
+    height: 2px;
+    margin-top: 7px;
+    background: var(--blue);
+}
+
+.discord {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #414bc0;
+    background: #5865f2;
+    color: #fff;
+    text-decoration: none;
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+.discord:hover {
+    transform: translateY(-2px);
+    background: #6975f5;
+}
+
+.discord svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.cloud {
+    position: absolute;
+    height: 18px;
+    background: #202936;
+    opacity: .8;
+}
+
+.cloud::before,
+.cloud::after {
+    content: "";
+    position: absolute;
+    background: #202936;
+}
+
+.cloud::before {
+    width: 42px;
+    height: 20px;
+    left: 22px;
+    top: -10px;
+}
+
+.cloud::after {
+    width: 30px;
+    height: 14px;
+    left: 65px;
+    top: 4px;
+}
+
+.cloud-1 {
+    width: 105px;
+    top: 19%;
+    left: 8%;
+}
+
+.cloud-2 {
+    width: 130px;
+    top: 30%;
+    right: 11%;
+}
+
+.cloud-3 {
+    width: 75px;
+    top: 62%;
+    left: 17%;
+}
+
+.cloud-4 {
+    width: 115px;
+    top: 52%;
+    right: 23%;
+}
+
+.ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 105px;
+    background: var(--dirt);
+    border-top: 16px solid var(--grass);
+}
+
+.ground::before {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: 0;
+    width: 100%;
+    height: 7px;
+    background: var(--grass-light);
+}
+
+.hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: min(900px,90vw);
+    text-align: center;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.hero-title {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(100px,18vw,230px);
+    line-height: .8;
+    font-weight: 800;
+    letter-spacing: -15px;
+    margin-left: -15px;
+    color: #fff;
+    text-shadow: 7px 7px 0 #202733;
+}
+
+.hero-subtitle {
+    margin-top: 36px;
+    color: #aab4c4;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.scroll-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 38px;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: #aeb8c8;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    animation: float 2s ease-in-out infinite;
+}
+
+.scroll-arrow {
+    font-size: 18px;
+}
+
+@keyframes float {
+    0%,100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+.version-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    width: min(900px,90vw);
+}
+
+.version-number {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(65px,12vw,150px);
+    font-weight: 800;
+    letter-spacing: -9px;
+    color: #fff;
+    text-shadow: 6px 6px 0 #202733;
+}
+
+.version-label {
+    margin-top: 22px;
+    font-family: "JetBrains Mono", monospace;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.version-box {
+    display: inline-flex;
+    margin-top: 34px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    padding: 12px 18px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: #bac4d3;
+}
+
+.version-box strong {
+    color: var(--blue);
+    margin-right: 8px;
+}
+
+.selector-page {
+    background: #090d13;
+}
+
+.selector-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: min(900px,90vw);
+}
+
+.selector-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.selector-header h2 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(27px,4vw,43px);
+    font-weight: 800;
+}
+
+.selector-header p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+}
+
+.runtime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.runtime {
+    position: relative;
+    min-height: 180px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        background .2s ease;
+}
+
+.runtime:hover {
+    transform: translateY(-3px);
+    border-color: #3b4658;
+    background: #111721;
+}
+
+.runtime.selected {
+    border: 2px solid var(--blue);
+    background: #0d1624;
+}
+
+.runtime-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.runtime-js .runtime-icon {
+    background: #f1d23b;
+    color: #111;
+}
+
+.runtime-wasm .runtime-icon {
+    background: #3b73c9;
+    color: #fff;
+}
+
+.runtime h3 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.runtime p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.recommended {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 7px;
+    background: #183e27;
+    color: #67d57c;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.check {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    width: 23px;
+    height: 23px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--blue);
+    color: #fff;
+    font-weight: 800;
+}
+
+.runtime.selected .check {
+    display: flex;
+}
+
+.continue {
+    display: block;
+    margin: 28px auto 0;
+    min-width: 220px;
+    padding: 15px 24px;
+    border: 1px solid var(--blue);
+    background: var(--blue);
+    color: #fff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.continue:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+}
+
+.page-indicator {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    z-index: 30;
+}
+
+.indicator {
+    width: 5px;
+    height: 5px;
+    background: #3b4350;
+    transition:
+        height .25s ease,
+        background .25s ease;
+}
+
+.indicator.active {
+    height: 24px;
+    background: var(--blue);
+}
+
+#transition {
+    position: fixed;
+    inset: 0;
+    background: var(--blue);
+    transform: translateY(100%);
+    z-index: 100;
+    pointer-events: none;
+}
+
+#transition.animate {
+    animation: pageTransition .85s cubic-bezier(.77,0,.18,1);
+}
+
+@keyframes pageTransition {
+    0% {
+        transform: translateY(100%);
+    }
+    45% {
+        transform: translateY(0);
+    }
+    55% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+@media (max-width:700px) {
+    .navbar {
+        height: 65px;
+        padding: 0 20px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .hero-title {
+        letter-spacing: -8px;
+        margin-left: -8px;
+    }
+
+    .runtime-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .runtime {
+        min-height: 145px;
+    }
+
+    .page-indicator {
+        right: 15px;
+    }
+
+    .ground {
+        height: 65px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<div id="transition"></div>
+
+<section class="page active" data-page="0">
+
+<nav class="navbar">
+<div class="brand">EAG</div>
+
+<div class="nav-links">
+<span class="active">Home i think</span>
+<span>Download</span>
+<span>Features</span>
+<span>About</span>
+</div>
+
+<a class="discord" href="#" aria-label="Discord" target="_blank">
+<svg viewBox="0 0 24 24">
+<path d="M19.54 5.32A16.2 16.2 0 0 0 15.5 4l-.5 1.02a14.5 14.5 0 0 0-6 0L8.5 4a16.2 16.2 0 0 0-4.04 1.32C1.91 9.26 1.22 13.1 1.56 16.88A16.3 16.3 0 0 0 6.5 19.4l1.2-1.64c-.66-.25-1.3-.57-1.9-.96l.47-.36c3.67 1.7 8.02 1.7 11.65 0l.47.36c-.6.39-1.24.71-1.9.96l1.2 1.64a16.3 16.3 0 0 0 4.94-2.52c.4-4.38-.68-8.18-3.09-11.56ZM8.43 14.48c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Zm7.14 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Z"/>
+</svg>
+</a>
+</nav>
+
+<div class="cloud cloud-1"></div>
+<div class="cloud cloud-2"></div>
+<div class="cloud cloud-3"></div>
+<div class="cloud cloud-4"></div>
+
+<div class="hero-content">
+<div class="eyebrow">not a teavm project</div>
+<h1 class="hero-title">EAG</h1>
+<p class="hero-subtitle">A new gen browser runtime for<br>Eaglercraft.</p>
+<div class="scroll-hint">
+Scroll to continue
+<span class="scroll-arrow">↓</span>
+</div>
+</div>
+
+<div class="ground"></div>
+
+</section>
+
+<section class="page" data-page="1">
+
+<nav class="navbar">
+<div class="brand">EAG</div>
+
+<div class="nav-links">
+<span>Home</span>
+<span class="active">Download or play</span>
+<span>Features</span>
+<span>About</span>
+</div>
+
+<a class="discord" href="#" aria-label="Discord" target="_blank">
+<svg viewBox="0 0 24 24">
+<path d="M19.54 5.32A16.2 16.2 0 0 0 15.5 4l-.5 1.02a14.5 14.5 0 0 0-6 0L8.5 4a16.2 16.2 0 0 0-4.04 1.32C1.91 9.26 1.22 13.1 1.56 16.88A16.3 16.3 0 0 0 6.5 19.4l1.2-1.64c-.66-.25-1.3-.57-1.9-.96l.47-.36c3.67 1.7 8.02 1.7 11.65 0l.47.36c-.6.39-1.24.71-1.9.96l1.2 1.64a16.3 16.3 0 0 0 4.94-2.52c.4-4.38-.68-8.18-3.09-11.56ZM8.43 14.48c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Zm7.14 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Z"/>
+</svg>
+</a>
+</nav>
+
+<div class="cloud cloud-1"></div>
+<div class="cloud cloud-2"></div>
+
+<div class="version-content">
+<div class="eyebrow">Current Release</div>
+<h2 class="version-number">1.19.4</h2>
+<p class="version-label">EAG brings Minecraft 1.19.4<br>directly to the browser through TeaVM.</p>
+<div class="version-box">
+<strong>TEAVM</strong>
+Browser-ready Java compilation
+</div>
+</div>
+
+<div class="ground"></div>
+
+</section>
+
+<section class="page selector-page" data-page="2">
+
+<nav class="navbar">
+<div class="brand">EAG</div>
+
+<div class="nav-links">
+<span>Home</span>
+<span class="active">Download</span>
+<span>Features</span>
+<span>About</span>
+</div>
+
+<a class="discord" href="#" aria-label="Discord" target="_blank">
+<svg viewBox="0 0 24 24">
+<path d="M19.54 5.32A16.2 16.2 0 0 0 15.5 4l-.5 1.02a14.5 14.5 0 0 0-6 0L8.5 4a16.2 16.2 0 0 0-4.04 1.32C1.91 9.26 1.22 13.1 1.56 16.88A16.3 16.3 0 0 0 6.5 19.4l1.2-1.64c-.66-.25-1.3-.57-1.9-.96l.47-.36c3.67 1.7 8.02 1.7 11.65 0l.47.36c-.6.39-1.24.71-1.9.96l1.2 1.64a16.3 16.3 0 0 0 4.94-2.52c.4-4.38-.68-8.18-3.09-11.56ZM8.43 14.48c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Zm7.14 0c-1.1 0-2-.99-2-2.2s.88-2.2 2-2.2c1.13 0 2 .99 2 2.2s-.88 2.2-2 2.2Z"/>
+</svg>
+</a>
+</nav>
+
+<div class="selector-content">
+
+<div class="selector-header">
+<div class="eyebrow">EAG 1.19.4</div>
+<h2>Select Your Runtime</h2>
+<p>Choose how EAG should run in your browser.</p>
+</div>
+
+<div class="runtime-grid">
+
+<div class="runtime runtime-js" data-runtime="javascript">
+<div class="check">✓</div>
+<div class="runtime-icon">JS</div>
+<h3>JavaScript</h3>
+<p>Standard TeaVM JavaScript output. Compatible with most browsers.</p>
+</div>
+
+<div class="runtime runtime-wasm selected" data-runtime="wasm-gc">
+<div class="check">✓</div>
+<div class="runtime-icon">GC</div>
+<h3>Wasm-GC</h3>
+<p>Modern WebAssembly runtime with improved performance and efficiency.</p>
+<span class="recommended">Recommended</span>
+</div>
+
+</div>
+
+<button class="continue" id="continueButton">Continue →</button>
+
+</div>
+
+</section>
+
+<div class="page-indicator">
+<div class="indicator active"></div>
+<div class="indicator"></div>
+<div class="indicator"></div>
+</div>
+
+</div>
+
+<script>
+const pages = document.querySelectorAll(".page");
+const indicators = document.querySelectorAll(".indicator");
+const transition = document.getElementById("transition");
+
+let currentPage = 0;
+let isTransitioning = false;
+let wheelCooldown = false;
+let selectedRuntime = "wasm-gc";
+
+function goToPage(target) {
+    if (target < 0 || target >= pages.length) return;
+    if (target === currentPage || isTransitioning) return;
+
+    isTransitioning = true;
+
+    transition.classList.remove("animate");
+    void transition.offsetWidth;
+    transition.classList.add("animate");
+
+    setTimeout(() => {
+        pages[currentPage].classList.remove("active");
+        pages[currentPage].classList.add("previous");
+
+        pages[target].classList.remove("previous");
+        pages[target].classList.add("active");
+
+        indicators[currentPage].classList.remove("active");
+        indicators[target].classList.add("active");
+
+        currentPage = target;
+    }, 380);
+
+    setTimeout(() => {
+        transition.classList.remove("animate");
+        isTransitioning = false;
+    }, 850);
+}
+
+window.addEventListener("wheel", event => {
+    event.preventDefault();
+
+    if (wheelCooldown || isTransitioning) return;
+    if (Math.abs(event.deltaY) < 20) return;
+
+    wheelCooldown = true;
+
+    if (event.deltaY > 0) {
+        goToPage(currentPage + 1);
+    } else {
+        goToPage(currentPage - 1);
+    }
+
+    setTimeout(() => {
+        wheelCooldown = false;
+    }, 900);
+}, { passive: false });
+
+window.addEventListener("keydown", event => {
+    if (event.key === "ArrowDown" || event.key === "PageDown") {
+        goToPage(currentPage + 1);
+    }
+
+    if (event.key === "ArrowUp" || event.key === "PageUp") {
+        goToPage(currentPage - 1);
+    }
+});
+
+let touchStartY = 0;
+
+window.addEventListener("touchstart", event => {
+    touchStartY = event.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener("touchend", event => {
+    const touchEndY = event.changedTouches[0].clientY;
+    const difference = touchStartY - touchEndY;
+
+    if (Math.abs(difference) < 50) return;
+
+    if (difference > 0) {
+        goToPage(currentPage + 1);
+    } else {
+        goToPage(currentPage - 1);
+    }
+}, { passive: true });
+
+document.querySelectorAll(".runtime").forEach(runtime => {
+    runtime.addEventListener("click", () => {
+        document.querySelectorAll(".runtime").forEach(item => {
+            item.classList.remove("selected");
+        });
+
+        runtime.classList.add("selected");
+        selectedRuntime = runtime.dataset.runtime;
+    });
+});
+
+document.getElementById("continueButton").addEventListener("click", () => {
+    if (selectedRuntime === "wasm-gc") {
+        window.location.href = "/wasm-gc/";
+    } else {
+        window.location.href = "/javascript/";
+    }
+});
+</script>
+
+</body>
+</html>
+```
